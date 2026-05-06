@@ -1,1 +1,24 @@
+pipeline {
+    agent any
 
+    stages {
+
+        stage('Clone Code') {
+            steps {
+                git 'https://github.com/vishwash-debug/php-k8s-devops-project.git'
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                sh 'docker build -t php-app .'
+            }
+        }
+
+        stage('Run Container') {
+            steps {
+                sh 'docker run -d -p 80:80 --name php-container php-app'
+            }
+        }
+    }
+}
