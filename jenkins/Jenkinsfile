@@ -12,20 +12,20 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                sh 'docker build -t php-app .'
+                sh 'eval $(minikube docker-env) && docker build -t php-app:latest .'
             }
         }
 
-        stage('Stop Old Container') {
+        stage('Deploy To Kubernetes') {
             steps {
-                sh 'docker stop php-container || true'
-                sh 'docker rm php-container || true'
+                sh 'kubectl apply -f k8s/deployment.yaml'
+                sh 'kubectl apply -f k8s/service.yaml'
             }
         }
 
-        stage('Run New Container') {
+        stage('Check Pods') {
             steps {
-                sh 'docker run -d -p 80:80 --name php-container php-app'
+                sh 'kubectl get pods'
             }
         }
 
